@@ -13,7 +13,7 @@ $(function() {
 	// 入場ボタン クリックイベント
 	$('#entry').click(function(){
 		var roomId = $('#room').val()
-		webSocket = new WebSocket(`ws://127.0.0.1:9000/chat/${roomId}`)
+		webSocket = new WebSocket(`ws://160.16.209.166:9000/chat/${roomId}`)
 	    // イベントハンドラの設定
 	    webSocket.onopen = function(event){
 			console.log("接続しました。")
