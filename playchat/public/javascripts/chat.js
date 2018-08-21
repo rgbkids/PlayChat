@@ -4,21 +4,25 @@ var webSocket = null
 $(function() {
 	// 初期化
 	$('#entry, #speech, #send, #leave').prop('disabled', true)
-	
+
 	// 名前 キーアップイベント
 	$('#user').keyup(function(){
 		$('#entry').prop('disabled', !($(this).val().length > 0))
 	})
-	
+
+	//
+	$('#room').val(123)
+	$('#user').val('suzuki')
+
 	// 入場ボタン クリックイベント
-	$('#entry').click(function(){
+	// $('#entry').click(function(){
 		var roomId = $('#room').val()
 		webSocket = new WebSocket(`ws://160.16.209.166:9000/chat/${roomId}`)
 	    // イベントハンドラの設定
 	    webSocket.onopen = function(event){
 			console.log("接続しました。")
 	    }
-	  
+
 	    webSocket.onmessage = function(event){
 	    	var data = JSON.parse(event.data)
 	    	var text, align
@@ -29,30 +33,32 @@ $(function() {
 	    		text = `${data.text} <= ${data.user}`
 	    		align = 'right'
 	    	}
-	    	
+
 	    	var div = $('<div>').text(text)
     		$('div.talk').prepend($(div).css('text-align', align))
-	    	
+
 	    }
-	  
+
 	    webSocket.onclose = function(event){
 	    	console.log("接続を切断しました。")
-	    	
+
 	    	$('div.talk').children().remove()
-		
+
 			$('#user, #room, #entry').prop('disabled', false)
 		    $('#speech, #send, #leave').prop('disabled', true)
 		    $('#speech').val("")
 	    }
-	  
+
 	    webSocket.onerror = function(event){
 	  	    console.log("エラーが発生しました。")
 	    }
-	  
+
 	    $('#user, #room, #entry').prop('disabled', true)
 	    $('#speech, #leave').prop('disabled', false)
-	})
-	
+	// })
+
+
+
 	// 発言 キーアップイベント
 	$('#speech').keyup(function(){
 		$('#send').prop('disabled', !($(this).val().length > 0))
@@ -69,11 +75,11 @@ $(function() {
 	    	$('#send').prop('disabled', true)
 	    }
 	})
-	
+
 	// 退出 クリックイベント
 	$('#leave').click(function(){
 		webSocket.close()
 		webSocket = null
 	})
-	
+
 })
