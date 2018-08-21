@@ -16,21 +16,21 @@ import play.api.libs.iteratee.Concurrent
 
 @Singleton
 class ChatController @Inject() (implicit system: ActorSystem, materializer: Materializer, roomClient: RoomClient) extends Controller {
-  
+
   def get = Action { implicit request =>
     Ok(views.html.chat())
   }
-  
+
   def ws(roomId: String) = WebSocket.accept[JsValue, JsValue] { request =>
-    
+
     val room = roomClient.chatRoom(roomId)
-    
+
     val userInput = ActorFlow.actorRef[JsValue, Message](RequestActor.props)
-    
+
     val userOutPut = ActorFlow.actorRef[Message, JsValue](ResponseActor.props)
-    
+
     userInput.viaMat(room.bus)(Keep.right).viaMat(userOutPut)(Keep.right)
 
   }
-  
+
 }
